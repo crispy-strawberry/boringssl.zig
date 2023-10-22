@@ -4,7 +4,7 @@ const boringssl = @import("boring_raw.zig");
 
 pub fn encodeBlock(dst: *u8, src: *u8, src_len: usize) usize {
     boringssl.EVP_EncodeBlock(dst, src, src_len);
-    boringssl.
+    
 }
 
 pub fn encodedLength(len: usize) !usize {
