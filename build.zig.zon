@@ -1,0 +1,12 @@
+.{
+    .name = "boringssl_zig",
+    .version = "0.1.0",
+    .paths = .{""},
+
+    .dependencies = .{
+        .boringssl = .{
+            .url = "git+https://github.com/crispy-strawberry/boringssl#pkg-manager",
+            .hash = "1220b52d882a968b370ae3a5032ad20ed3350c06fd9c065e51c6f099e19b1550925b"
+        }
+    }
+}

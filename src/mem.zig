@@ -3,7 +3,7 @@ const mem = std.mem;
 const Allocator = std.mem.Allocator;
 const boringssl_mem = @This();
 
-const boringssl = @import("boring_raw.zig");
+const boringssl = @import("boringssl");
 
 const MemoryError = error{AllocationError};
 

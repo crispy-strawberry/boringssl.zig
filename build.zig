@@ -15,6 +15,10 @@ pub fn build(b: *std.Build) void {
     // set a preferred release mode, allowing the user to decide how to optimize.
     const optimize = b.standardOptimizeOption(.{});
 
+    const boringssl = b.dependency("boringssl", .{
+        .target = target,
+        .optimize = optimize,
+    });
     const lib = b.addStaticLibrary(.{
         .name = "boringssl.zig",
         // In this case the main source file is merely a path, however, in more
@@ -23,15 +27,8 @@ pub fn build(b: *std.Build) void {
         .target = target,
         .optimize = optimize,
     });
-    lib.linkLibC();
-    lib.linkLibCpp();
-    lib.addIncludePath(std.Build.LazyPath.relative("./include/"));
-    lib.addLibraryPath(std.Build.LazyPath.relative("./lib/"));
-    lib.linkSystemLibrary("crypto");
-    lib.linkSystemLibrary("ssl");
-    // This declares intent for the library to be installed into the standard
-    // location when the user invokes the "install" step (the default step when
-    // running `zig build`).
+    lib.addModule("boringssl", boringssl.module("boringssl"));
+    lib.linkLibrary(boringssl.artifact("crypto_static"));
     b.installArtifact(lib);
 
     // Creates a step for unit testing. This only builds the test executable
@@ -41,13 +38,8 @@ pub fn build(b: *std.Build) void {
         .target = target,
         .optimize = optimize,
     });
-    main_tests.linkLibC();
-    main_tests.linkLibCpp();
-    main_tests.addIncludePath(std.Build.LazyPath.relative("./include/"));
-    main_tests.addLibraryPath(std.Build.LazyPath.relative("./lib/"));
-    main_tests.linkSystemLibrary("crypto");
-    main_tests.linkSystemLibrary("ssl");
-
+    main_tests.addModule("boringssl", boringssl.module("boringssl"));
+    main_tests.linkLibrary(boringssl.artifact("crypto_static"));
     const run_main_tests = b.addRunArtifact(main_tests);
 
     // This creates a build step. It will be visible in the `zig build --help` menu,

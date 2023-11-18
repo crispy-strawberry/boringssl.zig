@@ -1,7 +1,7 @@
 const std = @import("std");
 const mem = @import("mem.zig");
 
-const boringssl = @import("boring_raw.zig");
+const boringssl = @import("boringssl");
 
 /// Gets random bytes
 pub fn getRandomBytes(allocator: std.mem.Allocator, len: usize) ![]u8 {

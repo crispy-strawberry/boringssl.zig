@@ -1,10 +1,9 @@
 const std = @import("std");
 
-const boringssl = @import("boring_raw.zig");
+const boringssl = @import("boringssl");
 
 pub fn encodeBlock(dst: *u8, src: *u8, src_len: usize) usize {
     boringssl.EVP_EncodeBlock(dst, src, src_len);
-    
 }
 
 pub fn encodedLength(len: usize) !usize {
