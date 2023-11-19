@@ -1,9 +1,10 @@
 const std = @import("std");
+const boringssl = @import("boringssl");
+
+
 const mem = std.mem;
 const Allocator = std.mem.Allocator;
-const boringssl_mem = @This();
 
-const boringssl = @import("boringssl");
 
 const MemoryError = error{AllocationError};
 
@@ -13,9 +14,9 @@ const MemoryError = error{AllocationError};
 
 /// A helper function to allocate `n` elements of type `T`
 /// and return a pointer.
-pub fn mallocElements(comptime T: type, n: usize) ![*]T {
+pub fn mallocElements(comptime T: type, n: usize) ![]T {
     var opaque_ptr = boringssl.OPENSSL_malloc(n * @sizeOf(T)) orelse return error.AllocationError;
-    return @ptrCast(opaque_ptr);
+    return @as([*]T, @ptrCast(opaque_ptr))[0..n];
 }
 
 // pub fn zalloc(len: usize) ?*anyopaque {
@@ -24,17 +25,18 @@ pub fn mallocElements(comptime T: type, n: usize) ![*]T {
 
 /// A helper function to zallocate `n` elements of type `T`
 /// and return a pointer.
-pub fn zallocElements(comptime T: type, n: usize) ![*]T {
+pub fn zallocElements(comptime T: type, n: usize) ![]T {
     var opaque_ptr = boringssl.OPENSSL_zalloc(n * @sizeOf(T)) orelse return error.AllocationError;
-    return @ptrCast(opaque_ptr);
+    return @as([*]T, @ptrCast(opaque_ptr))[0..n];
 }
 
 // pub fn realloc(ptr: *anyopaque, new_size: usize) ?*anyopaque {
 //     return boringssl.OPENSSL_realloc(ptr, new_size) orelse null;
 // }
 
-pub fn calloc(comptime T: type, n: usize) ?[*]T {
-    return boringssl.OPENSSL_calloc(n, @sizeOf(T)) orelse MemoryError.AllocationError;
+pub fn callocElements(comptime T: type, n: usize) ![]T {
+    const ptr = boringssl.OPENSSL_calloc(n, @sizeOf(T)) orelse return MemoryError.AllocationError;
+    return @as([*]T, @ptrCast(ptr))[0..n];
 }
 
 /// Zeroes out len elements at ptr.
@@ -52,8 +54,8 @@ pub fn freeBuffer(buf: []type) void {
 
 pub fn memcmp(a: *anyopaque, b: *anyopaque, len: usize) bool {
     switch (boringssl.CRYPTO_memcmp(a, b, len)) {
-        0 => return true,
-        else => return false,
+        0 => true,
+        else => false,
     }
 }
 

@@ -6,7 +6,8 @@
     .dependencies = .{
         .boringssl = .{
             .url = "git+https://github.com/crispy-strawberry/boringssl#pkg-manager",
-            .hash = "1220b52d882a968b370ae3a5032ad20ed3350c06fd9c065e51c6f099e19b1550925b"
+            .hash = "1220137bf4abd3ed9aa2311e6b4f895e74226decd6bbea0815934e9371537f9d1a61"
+
         }
     }
 }
